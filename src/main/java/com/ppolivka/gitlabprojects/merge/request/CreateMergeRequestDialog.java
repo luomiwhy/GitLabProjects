@@ -14,6 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Optional;
 
 /**
  * Dialog fore creating merge requests
@@ -27,7 +30,7 @@ public class CreateMergeRequestDialog extends DialogWrapper {
 
     private JPanel mainView;
     private JComboBox targetBranch;
-    private JLabel currentBranch;
+    private JComboBox currentBranch;
     private JTextField mergeTitle;
     private JTextArea mergeDescription;
     private JButton diffButton;
@@ -64,10 +67,14 @@ public class CreateMergeRequestDialog extends DialogWrapper {
         assigneeBox.addItemListener(searchBoxModel);
         assigneeBox.setBounds(140, 170, 180, 20);
 
-        currentBranch.setText(mergeRequestWorker.getGitLocalBranch().getName());
-
         myBranchModel = new SortedComboBoxModel<>((o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
         myBranchModel.setAll(mergeRequestWorker.getBranches());
+
+        String currentBranchName = mergeRequestWorker.getGitLocalBranch().getName();
+//        currentBranch.setText(currentBranchName);
+        currentBranch.setModel(myBranchModel);
+        myBranchModel.getItems().stream().filter(b -> currentBranchName.equals(b.getName())).findFirst().ifPresent(b -> currentBranch.setSelectedItem(b));
+
         targetBranch.setModel(myBranchModel);
         targetBranch.setSelectedIndex(0);
         if (mergeRequestWorker.getLastUsedBranch() != null) {
@@ -116,7 +123,8 @@ public class CreateMergeRequestDialog extends DialogWrapper {
         if (StringUtils.isBlank(mergeTitle.getText())) {
             return new ValidationInfo("Merge title cannot be empty", mergeTitle);
         }
-        if (getSelectedBranch().getName().equals(currentBranch.getText())) {
+//        if (getSelectedBranch().getName().equals(currentBranch.getText())) {
+        if (getSelectedBranch().equals(currentBranch.getSelectedItem())) {
             return new ValidationInfo("Target branch must be different from current branch.", targetBranch);
         }
         return null;
@@ -142,7 +150,7 @@ public class CreateMergeRequestDialog extends DialogWrapper {
     }
 
     private String mergeTitleGenerator(BranchInfo branchInfo) {
-        return "Merge of " + currentBranch.getText() + " to " + branchInfo;
+        return "Merge of " + ((BranchInfo) currentBranch.getSelectedItem()).getName() + " to " + branchInfo;
     }
 
     @Nullable
