@@ -38,7 +38,8 @@ public class CreateMergeRequestDialog extends DialogWrapper {
     private JCheckBox removeSourceBranch;
     private JCheckBox wip;
 
-    private SortedComboBoxModel<BranchInfo> myBranchModel;
+    private SortedComboBoxModel<BranchInfo> currentBranchModel;
+    private SortedComboBoxModel<BranchInfo> targetBranchModel;
     private BranchInfo lastSelectedBranch;
 
     final ProjectState projectState;
@@ -67,15 +68,16 @@ public class CreateMergeRequestDialog extends DialogWrapper {
         assigneeBox.addItemListener(searchBoxModel);
         assigneeBox.setBounds(140, 170, 180, 20);
 
-        myBranchModel = new SortedComboBoxModel<>((o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
-        myBranchModel.setAll(mergeRequestWorker.getBranches());
+        currentBranchModel = new SortedComboBoxModel<>((o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
+        currentBranchModel.setAll(mergeRequestWorker.getBranches());
 
         String currentBranchName = mergeRequestWorker.getGitLocalBranch().getName();
-//        currentBranch.setText(currentBranchName);
-        currentBranch.setModel(myBranchModel);
-        myBranchModel.getItems().stream().filter(b -> currentBranchName.equals(b.getName())).findFirst().ifPresent(b -> currentBranch.setSelectedItem(b));
+        currentBranch.setModel(currentBranchModel);
+        currentBranchModel.getItems().stream().filter(b -> currentBranchName.equals(b.getName())).findFirst().ifPresent(b -> currentBranch.setSelectedItem(b));
 
-        targetBranch.setModel(myBranchModel);
+        targetBranchModel = new SortedComboBoxModel<>((o1, o2) -> StringUtil.naturalCompare(o1.getName(), o2.getName()));
+        targetBranchModel.setAll(mergeRequestWorker.getBranches());
+        targetBranch.setModel(targetBranchModel);
         targetBranch.setSelectedIndex(0);
         if (mergeRequestWorker.getLastUsedBranch() != null) {
             targetBranch.setSelectedItem(mergeRequestWorker.getLastUsedBranch());
