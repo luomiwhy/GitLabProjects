@@ -7,7 +7,7 @@ intellij {
     version 'IC-2020.1'
     updateSinceUntilBuild false
     plugins = ['git4idea']
-    pluginName 'GitLabProjects2020'
+    pluginName 'GitLabProjects2022'
 }
 
 repositories {

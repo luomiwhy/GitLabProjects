@@ -1,7 +1,7 @@
 <idea-plugin>
     <id>com.failfast</id>
-    <name>GitLab Projects 2020</name>
-    <version>2.0.4</version>
+    <name>GitLab Projects 2022</name>
+    <version>2.0.5</version>
     <vendor email="dairowu@163.com" url="https://github.com/wudeyong/GitLabProjects">Davin</vendor>
 
     <description><![CDATA[
